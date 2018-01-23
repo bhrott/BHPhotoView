@@ -111,4 +111,7 @@ To capture photo, call the `capturePhoto` method:
 
 ## Release Notes
 
+### 0.9.1
+* Fix: cocoapods validation
+
 ### 0.9.0: First release o/
