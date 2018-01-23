@@ -16,7 +16,8 @@ target 'YouProject' do
   use_frameworks!
 
   # Pods for TestCameraPod
-  pod 'BHPhotoView'
+  # this is temporary due to cocoapods publish issue.
+  pod 'BHPhotoView', :git => 'https://github.com/benhurott/BHPhotoView'
 
 end
 ```
@@ -78,7 +79,7 @@ class ViewController: UIViewController  {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.photoView.delegate = self
+        self.photoView.delegate = self //<-- here
     }
 }
 ```
