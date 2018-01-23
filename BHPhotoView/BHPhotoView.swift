@@ -11,8 +11,8 @@ import UIKit
 import AVFoundation
 
 public protocol BHPhotoViewDelegate {
-    func onPhotoCaptured(_ photo: UIImage)
-    func onPhotoCapturingError(_ error: BHPhotoViewError)
+    func onPhotoCaptured(_ view:BHPhotoView, photo: UIImage)
+    func onPhotoCapturingError(_ view:BHPhotoView, error: BHPhotoViewError)
 }
 
 public struct BHPhotoViewError: Error {
@@ -57,7 +57,7 @@ public class BHPhotoView: UIView {
     public func capturePhoto(usingSettings photoSettings: AVCapturePhotoSettings) {
         guard let capturePhotoOutput = self.capturePhotoOutput else {
             let err = BHPhotoViewError.init("Error when capturing photo output.")
-            self.delegate?.onPhotoCapturingError(err)
+            self.delegate?.onPhotoCapturingError(self, error: err)
             return
         }
         capturePhotoOutput.capturePhoto(with: photoSettings, delegate: self)
@@ -108,13 +108,13 @@ extension BHPhotoView : AVCapturePhotoCaptureDelegate {
         // Make sure we get some photo sample buffer
         guard error == nil else {
             let err = BHPhotoViewError.init("Error when retrieving photo from AVFoundation", error: error)
-            self.delegate?.onPhotoCapturingError(err)
+            self.delegate?.onPhotoCapturingError(self, error: err)
             return
         }
         
         guard let photoSampleBuffer = photoSampleBuffer else {
             let err = BHPhotoViewError.init("Error when retrieving buffer.")
-            self.delegate?.onPhotoCapturingError(err)
+            self.delegate?.onPhotoCapturingError(self, error: err)
             return
         }
         
@@ -122,17 +122,17 @@ extension BHPhotoView : AVCapturePhotoCaptureDelegate {
         guard let imageData =
             AVCapturePhotoOutput.jpegPhotoDataRepresentation(forJPEGSampleBuffer: photoSampleBuffer, previewPhotoSampleBuffer: previewPhotoSampleBuffer) else {
                 let err = BHPhotoViewError.init("Error when retrieving image data.")
-                self.delegate?.onPhotoCapturingError(err)
+                self.delegate?.onPhotoCapturingError(self, error: err)
                 return
         }
         // Initialise a UIImage with our image data
         guard let capturedImage = UIImage.init(data: imageData , scale: 1.0) else {
             let err = BHPhotoViewError.init("Error when generating uiimage.")
-            self.delegate?.onPhotoCapturingError(err)
+            self.delegate?.onPhotoCapturingError(self, error: err)
             return
         }
         
-        self.delegate?.onPhotoCaptured(capturedImage)
+        self.delegate?.onPhotoCaptured(self, photo: capturedImage)
     }
 }
 

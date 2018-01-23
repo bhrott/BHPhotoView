@@ -1,10 +1,10 @@
 Pod::Spec.new do |s|
   s.name             = 'BHPhotoView'
-  s.version          = '0.1.0'
+  s.version          = '0.9.0'
   s.summary          = 'A ultra simple UIView for camera capturing.'
  
   s.description      = <<-DESC
-A ultra simple UIView for camera capturing.
+Using your custom UIView to display camera stream and take a photo from it. Nothing more.
                        DESC
  
   s.homepage         = 'https://github.com/benhurott/BHPhotoView'
