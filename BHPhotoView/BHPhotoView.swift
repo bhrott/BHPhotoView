@@ -42,7 +42,11 @@ public class BHPhotoView: UIView {
     
     public func start(cameraPosition: AVCaptureDevice.Position) {
         self.configureForCamera(cameraPosition: cameraPosition)
-        captureSession?.startRunning()
+        self.captureSession?.startRunning()
+    }
+    
+    public func stop() {
+        self.captureSession?.stopRunning()
     }
     
     public func capturePhoto() {

@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'BHPhotoView'
-  s.version          = '0.9.1'
+  s.version          = '0.10.1'
   s.summary          = 'A ultra simple UIView for camera capturing.'
  
   s.description      = <<-DESC

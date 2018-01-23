@@ -105,13 +105,23 @@ To capture photo, call the `capturePhoto` method:
 }
 ```
 
+To stop streaming, use the `stop` method:
+```swift
+@IBAction func onTouchMyButton(_ sender: Any) {
+    self.photoView.stop()
+}
+```
+
 ### 4 - Result =)
 ![Result](docs/res/bhphotoview.mov.gif)
 
 
 ## Release Notes
 
+### 0.10.0
+* Feat: adding `stop` method.
+
 ### 0.9.1
-* Fix: cocoapods validation
+* Fix: cocoapods validation.
 
 ### 0.9.0: First release o/
