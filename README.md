@@ -117,6 +117,10 @@ To stop streaming, use the `stop` method:
 ![Result](docs/res/bhphotoview.mov.gif)
 
 
+
+## Advanced
+If you want to use some "advanced" features, take a look at [ADVANCED DOCS](docs/ADVANCED.md).
+
 ## Release Notes
 
 ### 0.10.0
