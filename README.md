@@ -68,7 +68,7 @@ extension ViewController: BHPhotoViewDelegate {
 }
 ```
 
-Set the delegate:
+Set the delegate and camera position:
 ```swift
 import UIKit
 import BHPhotoView
@@ -79,7 +79,29 @@ class ViewController: UIViewController  {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.photoView.delegate = self //<-- here
+
+        self.photoView.delegate = self
+        self.photoView.cameraPosition = .front
+    }
+}
+```
+
+(OPTIONAL) Set preview orientation:
+```swift
+import UIKit
+import BHPhotoView
+
+class ViewController: UIViewController  {
+
+    @IBOutlet weak var photoView: BHPhotoView!
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        self.photoView.delegate = self
+        self.photoView.cameraPosition = .front
+
+        self.photoView.previewOrientation = AVCaptureVideoOrientation.landscapeLeft
     }
 }
 ```
@@ -89,11 +111,11 @@ To start camera, call the `start` method:
 ```swift
 override func viewDidLoad() {
     super.viewDidLoad()
-    // Do any additional setup after loading the view, typically from a nib.
+    
     self.photoView.delegate = self
+    self.photoView.cameraPosition = .front
 
-    // cameraPosition can be: .front | .back | .unspecified
-    self.photoView.start(cameraPosition: .front)
+    self.photoView.start()
 }
 ```
 
@@ -118,10 +140,20 @@ To stop streaming, use the `stop` method:
 
 
 
+
+
 ## Advanced
 If you want to use some "advanced" features, take a look at [ADVANCED DOCS](docs/ADVANCED.md).
 
 ## Release Notes
+
+### 0.11.0
+* Feat: customization
+    * Now you can access some internal props for advanced customization.
+
+Breaking changes:
+* The method `.start(cameraPosition: .front)` is now `.start()`
+* The method `.capturePhoto(usingSettings: photoSettings)` is removed. Set the `.photoSettings` property instead.
 
 ### 0.10.0
 * Feat: adding `stop` method.

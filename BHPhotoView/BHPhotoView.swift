@@ -16,32 +16,63 @@ public protocol BHPhotoViewDelegate {
 }
 
 public struct BHPhotoViewError: Error {
+    public var errorCode: String
     public var message: String
     public var rawError: Error?
     
-    public init(_ message: String, error: Error? = nil) {
+    public init(_ code: String, message: String, error: Error? = nil) {
+        self.errorCode = code
         self.message = message
         self.rawError = error
     }
 }
 
 public class BHPhotoView: UIView {
+    //
+    // MARK: private
     private var captureSession: AVCaptureSession?
-    private var videoPreviewLayer: AVCaptureVideoPreviewLayer?
     private var capturePhotoOutput: AVCapturePhotoOutput?
     
+    //
+    // MARK: configurable
+    public var videoPreviewLayer: AVCaptureVideoPreviewLayer?
+    
+    public var photoSettings: AVCapturePhotoSettings!
+    
+    public var cameraPosition: AVCaptureDevice.Position = .front
+    
+    public var delegate: BHPhotoViewDelegate? =  nil
+    
+    public var previewOrientation: AVCaptureVideoOrientation? {
+        get {
+            return self.videoPreviewLayer?.connection?.videoOrientation
+        }
+        set {
+            guard newValue != nil else {
+                return
+            }
+            
+            if self.videoPreviewLayer?.connection?.isVideoOrientationSupported == true {
+                self.videoPreviewLayer?.connection?.videoOrientation = newValue!
+            }
+        }
+    }
+    
+    //
+    // MARK: initialization
     override init(frame: CGRect) {
         super.init(frame: frame)
+        self.configureForCamera()
     }
     
     required public init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
+        self.configureForCamera()
     }
     
-    public var delegate: BHPhotoViewDelegate? =  nil
-    
-    public func start(cameraPosition: AVCaptureDevice.Position) {
-        self.configureForCamera(cameraPosition: cameraPosition)
+    //
+    // MARK: public methods
+    public func start() {
         self.captureSession?.startRunning()
     }
     
@@ -50,25 +81,31 @@ public class BHPhotoView: UIView {
     }
     
     public func capturePhoto() {
-        let photoSettings = AVCapturePhotoSettings()
-        photoSettings.isAutoStillImageStabilizationEnabled = true
-        photoSettings.isHighResolutionPhotoEnabled = true
-        photoSettings.flashMode = .off
-        
-        self.capturePhoto(usingSettings: photoSettings)
-    }
-    
-    public func capturePhoto(usingSettings photoSettings: AVCapturePhotoSettings) {
         guard let capturePhotoOutput = self.capturePhotoOutput else {
-            let err = BHPhotoViewError.init("Error when capturing photo output.")
+            let err = BHPhotoViewError.init("CAPTURING_PHOTO_OUTPUT", message: "Error when capturing photo output.")
             self.delegate?.onPhotoCapturingError(self, error: err)
             return
         }
-        capturePhotoOutput.capturePhoto(with: photoSettings, delegate: self)
+        
+        capturePhotoOutput.capturePhoto(with: self.photoSettings, delegate: self)
     }
     
-    private func configureForCamera(cameraPosition: AVCaptureDevice.Position) {
-        let captureDevice = self.getDevice(position: cameraPosition)
+    //
+    // MARK: private methods
+    private func configureForCamera() {
+        self.photoSettings = AVCapturePhotoSettings()
+        self.photoSettings.isAutoStillImageStabilizationEnabled = true
+        self.photoSettings.isHighResolutionPhotoEnabled = true
+        self.photoSettings.flashMode = .auto
+        
+        let captureDevice = self.getDevice()
+        
+        guard captureDevice != nil else {
+            let err = BHPhotoViewError.init("DEVICE_NOT_SUPPORTED", message: "Your current device not support camera capture.", error: nil)
+            self.delegate?.onPhotoCapturingError(self, error: err)
+            return
+        }
+        
         let input = try! AVCaptureDeviceInput(device: captureDevice!)
         
         captureSession = AVCaptureSession()
@@ -84,14 +121,14 @@ public class BHPhotoView: UIView {
         captureSession?.addOutput(capturePhotoOutput!)
     }
     
-    private func getDevice(position: AVCaptureDevice.Position) -> AVCaptureDevice? {
+    private func getDevice() -> AVCaptureDevice? {
         let deviceDescoverySession = AVCaptureDevice.DiscoverySession.init(
             deviceTypes: [AVCaptureDevice.DeviceType.builtInWideAngleCamera],
             mediaType: AVMediaType.video,
-            position: AVCaptureDevice.Position.unspecified)
+            position: self.cameraPosition)
         
         for device in deviceDescoverySession.devices {
-            if device.position == position {
+            if device.position == self.cameraPosition {
                 return device
             }
         }
@@ -111,13 +148,13 @@ extension BHPhotoView : AVCapturePhotoCaptureDelegate {
         // get captured image
         // Make sure we get some photo sample buffer
         guard error == nil else {
-            let err = BHPhotoViewError.init("Error when retrieving photo from AVFoundation", error: error)
+            let err = BHPhotoViewError.init("AVFOUNDATION_ERROR", message: "Error when retrieving photo from AVFoundation.", error: error)
             self.delegate?.onPhotoCapturingError(self, error: err)
             return
         }
         
         guard let photoSampleBuffer = photoSampleBuffer else {
-            let err = BHPhotoViewError.init("Error when retrieving buffer.")
+            let err = BHPhotoViewError.init("RETRIEVING_BUFFER", message: "Error when retrieving buffer.")
             self.delegate?.onPhotoCapturingError(self, error: err)
             return
         }
@@ -125,13 +162,14 @@ extension BHPhotoView : AVCapturePhotoCaptureDelegate {
         // Convert photo same buffer to a jpeg image data by using // AVCapturePhotoOutput
         guard let imageData =
             AVCapturePhotoOutput.jpegPhotoDataRepresentation(forJPEGSampleBuffer: photoSampleBuffer, previewPhotoSampleBuffer: previewPhotoSampleBuffer) else {
-                let err = BHPhotoViewError.init("Error when retrieving image data.")
+                let err = BHPhotoViewError.init("RETRIEVING_IMAGE_DATA", message: "Error when retrieving image data.")
                 self.delegate?.onPhotoCapturingError(self, error: err)
                 return
         }
+        
         // Initialise a UIImage with our image data
         guard let capturedImage = UIImage.init(data: imageData , scale: 1.0) else {
-            let err = BHPhotoViewError.init("Error when generating uiimage.")
+            let err = BHPhotoViewError.init("GENERATING_UIIMAGE", message: "Error when generating uiimage.")
             self.delegate?.onPhotoCapturingError(self, error: err)
             return
         }

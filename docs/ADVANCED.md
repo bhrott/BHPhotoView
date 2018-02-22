@@ -1,8 +1,6 @@
 # BHPhotoView :: Advanced
 
-## capturePhoto
-
-To capturing a photo from camera stream, we use the `capturePhoto` method.
+## Customazing photo settings
 
 If you want, you can pass a [AVCapturePhotoSettings](https://developer.apple.com/documentation/avfoundation/avcapturephotosettings) configuration:
 ```swift
@@ -10,7 +8,18 @@ If you want, you can pass a [AVCapturePhotoSettings](https://developer.apple.com
 let photoSettings = AVCapturePhotoSettings()
 photoSettings.isAutoStillImageStabilizationEnabled = true
 photoSettings.isHighResolutionPhotoEnabled = true
-photoSettings.flashMode = .off
+photoSettings.flashMode = .auto
 
-self.myBHPhotoView.capturePhoto(usingSettings: photoSettings)
+self.photoView.photoSettings = photoSettings
+```
+
+## Chaning video preview layer
+
+If you want to make some advanced customization on [AVCaptureVideoPreviewLayer](https://developer.apple.com/documentation/avfoundation/avcapturevideopreviewlayer):
+
+```swift
+// this is a sample for preview orientation
+if self.photoView.videoPreviewLayer?.connection?.isVideoOrientationSupported == true {
+    self.photoView.videoPreviewLayer?.connection?.videoOrientation = .portrait
+}
 ```
