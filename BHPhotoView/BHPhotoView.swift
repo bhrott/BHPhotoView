@@ -64,7 +64,7 @@ public class BHPhotoView: UIView {
         self.configureForCamera()
     }
     
-    override init(frame: CGRect) {
+    public override init(frame: CGRect) {
         super.init(frame: frame)
         self.configureForCamera()
     }

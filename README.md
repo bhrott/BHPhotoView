@@ -144,6 +144,9 @@ If you want to use some "advanced" features, take a look at [ADVANCED DOCS](docs
 
 ## Release Notes
 
+### 0.12.2
+* Fix: exposing public `frame:` contructor.
+
 ### 0.12.1
 * Fix: fixing crash on re-use photo settings.
 
