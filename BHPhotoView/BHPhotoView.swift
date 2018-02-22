@@ -29,12 +29,11 @@ public struct BHPhotoViewError: Error {
 
 public class BHPhotoView: UIView {
     //
-    // MARK: private
-    private var captureSession: AVCaptureSession?
-    private var capturePhotoOutput: AVCapturePhotoOutput?
-    
-    //
     // MARK: configurable
+    public var captureSession: AVCaptureSession?
+    
+    public var capturePhotoOutput: AVCapturePhotoOutput?
+    
     public var videoPreviewLayer: AVCaptureVideoPreviewLayer?
     
     public var photoSettings: AVCapturePhotoSettings!

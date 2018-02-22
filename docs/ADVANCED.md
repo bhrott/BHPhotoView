@@ -13,13 +13,11 @@ photoSettings.flashMode = .auto
 self.photoView.photoSettings = photoSettings
 ```
 
-## Chaning video preview layer
+## Exposed properties
 
-If you want to make some advanced customization on [AVCaptureVideoPreviewLayer](https://developer.apple.com/documentation/avfoundation/avcapturevideopreviewlayer):
+To customize native camera components, we expose this properties:
 
-```swift
-// this is a sample for preview orientation
-if self.photoView.videoPreviewLayer?.connection?.isVideoOrientationSupported == true {
-    self.photoView.videoPreviewLayer?.connection?.videoOrientation = .portrait
-}
-```
+* `.captureSession`: this is a [AVCaptureSession](https://developer.apple.com/documentation/avfoundation/avcapturesession) instance.
+* `.capturePhotoOutput`: this is a [AVCapturePhotoOutput](https://developer.apple.com/documentation/avfoundation/avcapturephotooutput) instance.
+* `.videoPreviewLayer`: this is a [AVCaptureVideoPreviewLayer](https://developer.apple.com/documentation/avfoundation/avcapturevideopreviewlayer) instance.
+
