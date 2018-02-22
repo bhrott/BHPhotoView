@@ -59,6 +59,11 @@ public class BHPhotoView: UIView {
     
     //
     // MARK: initialization
+    public convenience init() {
+        self.init(frame: .zero)
+        self.configureForCamera()
+    }
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         self.configureForCamera()
@@ -86,7 +91,8 @@ public class BHPhotoView: UIView {
             return
         }
         
-        capturePhotoOutput.capturePhoto(with: self.photoSettings, delegate: self)
+        let settingsForThisCapture = AVCapturePhotoSettings.init(from: self.photoSettings)
+        capturePhotoOutput.capturePhoto(with: settingsForThisCapture, delegate: self)
     }
     
     //
@@ -95,7 +101,7 @@ public class BHPhotoView: UIView {
         self.photoSettings = AVCapturePhotoSettings()
         self.photoSettings.isAutoStillImageStabilizationEnabled = true
         self.photoSettings.isHighResolutionPhotoEnabled = true
-        self.photoSettings.flashMode = .auto
+        self.photoSettings.flashMode = .off
         
         let captureDevice = self.getDevice()
         

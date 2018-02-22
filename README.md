@@ -144,6 +144,12 @@ If you want to use some "advanced" features, take a look at [ADVANCED DOCS](docs
 
 ## Release Notes
 
+### 0.12.1
+* Fix: fixing crash on re-use photo settings.
+
+Breaking change:
+* Not default flashMode is `off`.
+
 ### 0.12.0
 * Feat: exposed properties
     * Now more properties are exposed =).
