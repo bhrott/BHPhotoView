@@ -38,7 +38,11 @@ public class BHPhotoView: UIView {
     
     public var photoSettings: AVCapturePhotoSettings!
     
-    public var cameraPosition: AVCaptureDevice.Position = .front
+    public var cameraPosition: AVCaptureDevice.Position = .back {
+        didSet {
+            self.configureForCamera()
+        }
+    }
     
     public var delegate: BHPhotoViewDelegate? =  nil
     
@@ -66,6 +70,7 @@ public class BHPhotoView: UIView {
     
     public override init(frame: CGRect) {
         super.init(frame: frame)
+        self.layer.frame = frame
         self.configureForCamera()
     }
     
@@ -116,9 +121,20 @@ public class BHPhotoView: UIView {
         captureSession = AVCaptureSession()
         captureSession?.addInput(input)
         
+        let videoPreviewLayerName = "BHPhotoView.AVCaptureVideoPreviewLayer"
+        
         videoPreviewLayer = AVCaptureVideoPreviewLayer(session: captureSession!)
         videoPreviewLayer?.videoGravity = AVLayerVideoGravity.resizeAspectFill
         videoPreviewLayer?.frame = self.layer.bounds
+        videoPreviewLayer?.name = videoPreviewLayerName
+        
+        if let existingVideoPreviewLayer = self.layer.sublayers?.first(where: { (layer) -> Bool in
+            return layer.name == videoPreviewLayerName
+        }) {
+            existingVideoPreviewLayer.removeFromSuperlayer()
+            existingVideoPreviewLayer.removeAllAnimations()
+        }
+        
         self.layer.addSublayer(videoPreviewLayer!)
         
         capturePhotoOutput = AVCapturePhotoOutput()
@@ -146,9 +162,9 @@ extension BHPhotoView : AVCapturePhotoCaptureDelegate {
     public func photoOutput(_ captureOutput: AVCapturePhotoOutput,
                             didFinishProcessingPhoto photoSampleBuffer: CMSampleBuffer?,
                             previewPhoto previewPhotoSampleBuffer: CMSampleBuffer?,
-                 resolvedSettings: AVCaptureResolvedPhotoSettings,
-                 bracketSettings: AVCaptureBracketedStillImageSettings?,
-                 error: Error?) {
+                            resolvedSettings: AVCaptureResolvedPhotoSettings,
+                            bracketSettings: AVCaptureBracketedStillImageSettings?,
+                            error: Error?) {
         
         // get captured image
         // Make sure we get some photo sample buffer
@@ -182,5 +198,3 @@ extension BHPhotoView : AVCapturePhotoCaptureDelegate {
         self.delegate?.onPhotoCaptured(self, photo: capturedImage)
     }
 }
-
-

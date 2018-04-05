@@ -144,6 +144,12 @@ If you want to use some "advanced" features, take a look at [ADVANCED DOCS](docs
 
 ## Release Notes
 
+### 0.12.3
+* Fix: reload configuration after didSet for camera position.
+
+Breaking Change:
+* Default camera position is now `.back`
+
 ### 0.12.2
 * Fix: exposing public `frame:` contructor.
 
